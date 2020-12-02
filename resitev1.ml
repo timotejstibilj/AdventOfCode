@@ -24,30 +24,52 @@ end
 
 (*reševanje nalog*)
 
-let rec find_the_other first list =
+let rec find_the_other sum first list =
   match list with
-  | [] -> 0
-  | x :: xs -> if x + first = 2020 then x else find_the_other first xs
+  | [] -> None
+  | x :: xs -> if x + first = sum then Some x else find_the_other sum first xs
 
-let rec find_and_multiply_the_pair list =
+let razpakiraj_option = function
+  | None -> 0
+  | Some x -> x
+
+let rec find_and_multiply_the_pair sum list =
   match list with
   | [] -> 0
-  | x :: xs -> (if find_the_other x list = 0 then (find_and_multiply_the_pair xs)
-   else (find_the_other x list) * x)
+  | x :: xs -> (if find_the_other sum x list = None then (find_and_multiply_the_pair sum xs)
+   else (razpakiraj_option (find_the_other sum x list)) * x)
+  (*ne preveč lepo*)
 
 let naloga1 data = 
   let lines = List.lines data in
   lines |> List.int_list
-  |> find_and_multiply_the_pair 
+  |> find_and_multiply_the_pair 2020
   |> string_of_int  
-    
+
+
+let rec find_and_multiply_triplets list =
+  match list with
+  | [] -> 0
+  | x :: xs -> (if find_and_multiply_the_pair (2020 - x) xs != 0 then x * (find_and_multiply_the_pair (2020 - x) xs)
+                else find_and_multiply_triplets xs)
+
+let naloga2 data =
+let lines = List.lines data in
+  lines |> List.int_list
+  |> find_and_multiply_triplets
+  |> string_of_int
+
+
 
 (* Poženemo zadevo - pobrano iz vzorcne datoteke project_windows.ms *)
 let main () =
   let input_data = preberi_datoteko ("data/day_1.in") in
   let part1 = naloga1 input_data in
+  let part2 = naloga2 input_data in
   print_endline part1;
+  print_endline part2;
   izpisi_datoteko ("out/day_" ^ (string_of_int day) ^ "_1.out") part1;
+  izpisi_datoteko ("out/day_" ^ (string_of_int day) ^ "_2.out") part2;
   ()
 
 let _ = main ()
