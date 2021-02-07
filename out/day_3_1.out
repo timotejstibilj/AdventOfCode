@@ -1,0 +1,2 @@
+let lines = List.lines data in
+  lines |> List.int_list
